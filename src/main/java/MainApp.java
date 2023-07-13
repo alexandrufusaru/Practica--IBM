@@ -1,7 +1,4 @@
-import org.apache.spark.sql.Column;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.*;
 
 public class MainApp {
     public static void main(String[] args) {
@@ -22,6 +19,12 @@ public class MainApp {
         //dataset.select(new Column("Sending Country Code").toString().toLowerCase(),"Participant Age").show();
         //dataset.filter(new Column("Participant Age").gt(33)).show();
         //dataset.groupBy("Participant Age").count().show();
-        dataset.groupBy("Receiving Country Code","Sending Country Code").count().withColumnRenamed("count","Number Of Students").orderBy(new Column("Receiving Country Code").desc()).show();
+
+        dataset = dataset.filter(functions.col("Receiving Country Code").isin("RO","LT","UK"));
+
+        dataset.groupBy("Receiving Country Code","Sending Country Code")
+                .count().withColumnRenamed("count","Number Of Students")
+                .orderBy(new Column("Receiving Country Code").desc())
+                .show(100);
     }
 }
